@@ -68,19 +68,35 @@ header {
     }
     h1 {
         vertical-align: middle;
-      	font-family: "Crimson Text";
+        font-family: "Crimson Text";
     }
-    input {
+    .searchbar {
         position: absolute;
-        top: 1em;
+        height: 1.7em;
+        top: 1.5em;
         right: 2rem;
-        font-size: 1.2em;
         width: 15rem;
         border-top-left-radius: 1em;
         border-bottom-left-radius: 1em;
         border: 1px solid #ccc;
-        &::before {
-            content: "ldska";
+        overflow: hidden;
+    }
+    label {
+        display: inline;
+        position: relative;
+        left: .4em;
+        // bottom: em;
+    }
+    input {
+    	position: relative;
+        font-size: 1em;
+        left: .4em;
+        height: 1.3em;
+        width: 13rem;
+        border: 0;
+        font-weight: 300;
+        &:focus {
+            outline: none;
         }
     }
 }
@@ -91,8 +107,8 @@ main {
     margin: 0 auto;
 }
 .items {
-	opacity: 0;
-	transition: opacity .5s ease;
+    opacity: 0;
+    transition: opacity .5s ease;
     & > * {
         margin-bottom: 2em;
         background-color: #fff;
@@ -112,7 +128,7 @@ main {
         border-top-right-radius: .5em;
     }
     a {
-    	text-decoration: none;
+        text-decoration: none;
     }
     h3 {
         font-size: 1.2em;

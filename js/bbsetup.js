@@ -2,21 +2,9 @@
 (function() {
     var Router = Backbone.Router.extend({
 
-        routes: {
-            '': 'index',
-            ':listing': 'details'
-        },
-
-        index: function() {
-        },
-
-        details: function(query, page) {
-            etsy.drawDetails();
-        },
-
         initialize: function() {
+        	window.etsy = new Etsy();
             Backbone.history.start();
-            window.etsy = new Etsy();
         }
 
     });

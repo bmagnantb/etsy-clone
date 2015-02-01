@@ -879,19 +879,32 @@ header {
   header h1 {
     vertical-align: middle;
     font-family: "Crimson Text"; }
-  header input {
+  header .searchbar {
     position: absolute;
-    top: 1em;
+    height: 1.7em;
+    top: 1.5em;
     right: 2rem;
-    font-size: 1.2em;
     width: 15rem;
     -webkit-border-top-left-radius: 1em;
             border-top-left-radius: 1em;
     -webkit-border-bottom-left-radius: 1em;
             border-bottom-left-radius: 1em;
-    border: 1px solid #ccc; }
-    header input::before {
-      content: "ldska"; }
+    border: 1px solid #ccc;
+    overflow: hidden; }
+  header label {
+    display: inline;
+    position: relative;
+    left: .4em; }
+  header input {
+    position: relative;
+    font-size: 1em;
+    left: .4em;
+    height: 1.3em;
+    width: 13rem;
+    border: 0;
+    font-weight: 300; }
+    header input:focus {
+      outline: none; }
 
 main {
   padding: 7em 1em 1em;

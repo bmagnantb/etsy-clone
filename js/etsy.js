@@ -3,51 +3,108 @@
 
     function Etsy() {
         this.recentItems = [];
-        this.timer = 0;
-        this.counter = 0;
-        this.draw();
+        this.apiKey = 'callback=?&api_key=6990q3hh09orsy6z1x0ghq2q';
+        this.apiUrlStart = 'https://openapi.etsy.com/v2/';
+
+
+
+        var self = this;
+        var EtsyRouter = Backbone.Router.extend({
+            routes: {
+                '': 'index',
+                ':listing': 'details',
+                'search/:query': 'search'
+            },
+
+            index: function() {
+                self.drawListings(self.urls.interesting, self.templates.listings);
+            },
+
+            search: function() {
+                self.search();
+            },
+
+            details: function(query, page) {
+                document.querySelector('.items').innerHTML = '';
+            },
+
+            initialize: function() {
+                Backbone.history.start();
+            }
+        })
+        var etsyRouter = new EtsyRouter();
+
+        this.events();
     }
 
     Etsy.prototype = {
         urls: {
-            // featuredItems: ,
-        },
-
-        throttleRequests: function(timer, counter) {
-
-
+            interesting: 'listings/interesting.js?includes=Images&'
 
         },
 
-        draw: function() {
+        templates: {
+            listings: './templates/items.html'
+        },
+
+        events: function() {
+            $('#search').on('keydown', function(e) {
+              if(e.keyCode === 13 && this.value !== '') {
+              	window.location.hash = 'search/'+this.value;
+              	this.value = '';
+              }
+            });
+        },
+
+        makeUrl: function(api, key, uri) {
+            return api + uri + key;
+        },
+
+        drawListings: function(url, templateFile) {
+            var self = this;
             $.when(
-                this.listings(),
-                this.template()
+                this.data(url),
+                this.template(templateFile)
             ).then(function(data, template) {
                 console.log(data, template);
                 template = _.template(template);
                 document.querySelector('.items').innerHTML = template({
                     data: data
                 });
-            }).then(function(data){
-            	document.querySelector('.items').style.opacity = 1;
+            }).then(function(data) {
+                document.querySelector('.items').style.opacity = 1;
             })
         },
 
-        listings: function() {
+        data: function(url) {
             var self = this;
-            return $.getJSON('https://openapi.etsy.com/v2/listings/active.js?includes=Images&callback=?&api_key=6990q3hh09orsy6z1x0ghq2q').then(function(a) {
-                console.log(a);
-                self.recentItems = a.results;
-                return a.results;
+            var x = $.Deferred();
+            if (this.recentItems.length > 0) {
+                console.log('no download!');
+                x.resolve(this.recentItems);
+            } else {
+                console.log('download');
+                $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, url)).then(function(a) {
+                    var y = a.results;
+                    x.resolve(y);
+                    console.log(self);
+                    self.recentItems = y;
+                });
+            }
+            return x;
+        },
+
+        template: function(template) {
+            return $.get(template).then(function(a) {
+                return a;
             });
         },
 
-        template: function() {
+        search: function() {
 
-            return $.get('./templates/items.html').then(function(a) {
-                return a;
-            });
+        },
+
+        details: function() {
 
         }
 

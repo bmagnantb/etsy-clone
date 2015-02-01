@@ -12,12 +12,11 @@ function app(){
         {url: "./bower_components/jquery/dist/jquery.min.js"},
         {url: "./bower_components/lodash/lodash.min.js"},
         {url: "./bower_components/backbone/backbone.js"},
-        {url: "./js/etsy.js"},
-        {url: "./js/bbsetup.js"}
+        {url: "./js/etsy.js"}
     ).then(function(){
         // start app?
 
-        var etsyRouter = new Router();
+        window.etsy = new Etsy();
 
 
 
