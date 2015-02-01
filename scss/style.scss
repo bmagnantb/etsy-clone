@@ -47,6 +47,9 @@ html {
 img {
     max-width: 100%;
 }
+a {
+    text-decoration: none;
+}
 body {
     transition: opacity .25s ease;
     font-family: "Lato";
@@ -69,6 +72,7 @@ header {
     h1 {
         vertical-align: middle;
         font-family: "Crimson Text";
+        display: inline-block;
     }
     .searchbar {
         position: absolute;
@@ -88,13 +92,12 @@ header {
         // bottom: em;
     }
     input {
-    	position: relative;
+        position: relative;
         font-size: 1em;
         left: .4em;
         height: 1.3em;
         width: 13rem;
         border: 0;
-        font-weight: 300;
         &:focus {
             outline: none;
         }
@@ -126,9 +129,6 @@ main {
         margin-bottom: 1em;
         border-top-left-radius: .5em;
         border-top-right-radius: .5em;
-    }
-    a {
-        text-decoration: none;
     }
     h3 {
         font-size: 1.2em;
