@@ -1,7 +1,8 @@
 @import "../bower_components/normalize-scss/_normalize.scss";
 @import "../bower_components/typeplate-starter-kit/css/_typeplate.scss";
 @import "./mixins.scss";
-
+@import url("http://fonts.googleapis.com/css?family=Crimson+Text");
+@import url("http://fonts.googleapis.com/css?family=Lato");
 /**
  * BOX-SIZING
  */
@@ -9,7 +10,6 @@
 *, *:before, *:after {
     box-sizing: border-box;
 }
-
 /**
  * GRIDS
  */
@@ -20,7 +20,6 @@
     font-size: 0;
     text-align: justify;
     position: relative;
-
     & > * {
         font-size: medium;
         text-align: left;
@@ -28,24 +27,100 @@
         width: 100%;
         vertical-align: top;
     }
-
     &:after {
         display: inline-block;
         width: 100%;
         content: "";
-        font-size: medium;
+        font-size: 1rem;
     }
 }
-
-@include gridify(2, 400);
-@include gridify(4, 600);
-
+@include gridify(2, 28);
+@include gridify(3, 50);
 /**
  * GENERAL
  */
 
-img {max-width:100%;}
-
+html {
+    height: 100%;
+    transition: opacity .2s ease;
+}
+img {
+    max-width: 100%;
+}
 body {
     transition: opacity .25s ease;
+    font-family: "Lato";
+    min-height: 100%;
+    background-color: #f8f8f8;
+}
+header {
+    width: 100%;
+    position: fixed;
+    background-color: #fff;
+    box-shadow: 0 0 0 #888;
+    border-bottom: 1px solid #ccc;
+    z-index: 1;
+    padding: .5em 0;
+    div {
+        position: relative;
+        max-width: 60em;
+        margin: 0 auto;
+    }
+    h1 {
+        vertical-align: middle;
+      	font-family: "Crimson Text";
+    }
+    input {
+        position: absolute;
+        top: 1em;
+        right: 2rem;
+        font-size: 1.2em;
+        width: 15rem;
+        border-top-left-radius: 1em;
+        border-bottom-left-radius: 1em;
+        border: 1px solid #ccc;
+        &::before {
+            content: "ldska";
+        }
+    }
+}
+main {
+    padding: 7em 1em 1em;
+    min-height: 100%;
+    max-width: 60em;
+    margin: 0 auto;
+}
+.items {
+	opacity: 0;
+	transition: opacity .5s ease;
+    & > * {
+        margin-bottom: 2em;
+        background-color: #fff;
+        border-top-left-radius: .5em;
+        border-top-right-radius: .5em;
+        border: 1px solid #ccc;
+        padding-bottom: 1em;
+        // box-shadow: 0 0 .5rem #888;
+        & > * {
+            margin: 0;
+        }
+    }
+    img {
+        display: block;
+        margin-bottom: 1em;
+        border-top-left-radius: .5em;
+        border-top-right-radius: .5em;
+    }
+    a {
+    	text-decoration: none;
+    }
+    h3 {
+        font-size: 1.2em;
+        margin: 0 .5rem .5rem;
+    }
+    h4 {
+        font-size: .9em;
+        max-width: 95%;
+        margin: 0 .5rem;
+    }
 }
