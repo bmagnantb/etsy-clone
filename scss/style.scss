@@ -50,36 +50,44 @@ img {
 a {
     text-decoration: none;
 }
+h1, h2, h3 {
+	font-family: "Crimson Text";
+}
 body {
     transition: opacity .25s ease;
     font-family: "Lato";
     min-height: 100%;
     background-color: #f8f8f8;
+    position: relative;
+    font-size: medium;
 }
 header {
     width: 100%;
-    position: fixed;
+    position: absolute;
     background-color: #fff;
     box-shadow: 0 0 0 #888;
     border-bottom: 1px solid #ccc;
     z-index: 1;
     padding: .5em 0;
+    text-align: center;
     div {
         position: relative;
-        max-width: 60em;
+        max-width: 61em;
         margin: 0 auto;
+        padding: 0 .5em;
     }
     h1 {
         vertical-align: middle;
         font-family: "Crimson Text";
         display: inline-block;
+        margin: 0 auto .5rem;
     }
     .searchbar {
-        position: absolute;
+        // position: absolute;
+        text-align: left;
         height: 1.7em;
-        top: 1.5em;
-        right: 2rem;
-        width: 15rem;
+        right: .5em;
+        width: 15em;
         border-top-left-radius: 1em;
         border-bottom-left-radius: 1em;
         border: 1px solid #ccc;
@@ -88,8 +96,7 @@ header {
     label {
         display: inline;
         position: relative;
-        left: .4em;
-        // bottom: em;
+        left: 0;
     }
     input {
         position: relative;
@@ -104,10 +111,12 @@ header {
     }
 }
 main {
-    padding: 7em 1em 1em;
+    padding: 7.5em 1em 1em;
     min-height: 100%;
     max-width: 60em;
     margin: 0 auto;
+    min-height: 100%;
+    position: relative;
 }
 .items {
     opacity: 0;
@@ -119,7 +128,6 @@ main {
         border-top-right-radius: .5em;
         border: 1px solid #ccc;
         padding-bottom: 1em;
-        // box-shadow: 0 0 .5rem #888;
         & > * {
             margin: 0;
         }
@@ -138,5 +146,79 @@ main {
         font-size: .9em;
         max-width: 95%;
         margin: 0 .5rem;
+    }
+}
+.details {
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transition: top .5s ease;
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 1em 1.5em;
+    border: 1px solid #ccc;
+    h2 {
+        margin: 0 auto .5em;
+    }
+    h3 {
+    	font-size: 1.8em;
+    }
+    .images {
+        position: relative;
+        max-width:
+    }
+    .imgLrg {
+        display: block;
+        margin: 0 auto .5em;
+    }
+    .imgSidebar {
+        font-size: 0;
+        padding: .5rem 0;
+        margin: 0 auto .5rem;
+        max-width: 570px;
+    }
+    .imgSide {
+        margin-right: .25rem;
+        display: inline-block;
+    }
+    h4 {
+    	margin-bottom: .2em;
+    }
+    p {
+    	border: 1px solid #ccc;
+    	padding: 0 .25em;
+    	margin-left: .5em;
+    }
+    .desc {
+    	max-width: 32em;
+    	margin: 0 auto;
+    }
+    .buy {
+    	margin: 0 auto;
+    	text-align: center;
+    	h3 {
+    		display: inline-block;
+    		width: auto;
+    		border: 1px solid #333;
+    		padding: .5em;
+    	}
+    }
+}
+/*****
+MEDIA QUERIES
+*****/
+
+@media screen and (min-width: 40em) {
+		header {
+			text-align: left;
+			position: fixed;
+		}
+    .searchbar {
+        position: absolute;
+        top: 1.5em;
+    }
+    .details {
+    	margin: 0 .75em .75em;
     }
 }

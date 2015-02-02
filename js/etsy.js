@@ -6,6 +6,7 @@
         this.apiKey = '&callback=?&api_key=6990q3hh09orsy6z1x0ghq2q';
         this.apiUrlStart = 'https://openapi.etsy.com/v2/';
         this.prevQuery = '';
+        this.prevDetail = [];
 
 
 
@@ -18,27 +19,20 @@
             },
 
             index: function() {
+                document.querySelector('.details').style.top = '100%';
                 self.drawListings(self.urls.interesting, self.templates.listings, '.items');
             },
 
             drawSearch: function(query) {
-                console.log(query.indexOf(' '));
-                // if (query.indexOf(' ') > -1) {
-                //     query = [].map.call(query, function(val) {
-                //         if (val === ' ') {
-                //             console.log('mapping');
-                //             val = '%20';
-                //         }
-                //         console.log(val);
-                //         return val;
-                //     });
+                document.querySelector('.details').style.top = '100%';
                 query = query.replace(/ /g, '%20');
-                document.location.hash = query;
+                document.location.hash = 'search/' + query;
                 self.drawSearch(self.urls.search, self.templates.listings, '.items', query);
             },
 
-            details: function(query, page) {
-
+            details: function(listing) {
+                document.querySelector('.details').style.opacity = '1';
+                self.drawDetails(listing, self.templates.details, '.details');
             },
 
             initialize: function() {
@@ -58,7 +52,8 @@
         },
 
         templates: {
-            listings: './templates/items.html'
+            listings: './templates/items.html',
+            details: './templates/details.html'
         },
 
         data: function(url, query) {
@@ -68,9 +63,7 @@
                 console.log('no download!');
                 x.resolve(this.recentItems);
             } else {
-                console.log(url + ' before download');
                 console.log('download');
-                console.log(url);
                 $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, url, query)).then(function(a) {
                     var y = a.results;
                     x.resolve(y);
@@ -87,11 +80,9 @@
         },
 
         draw: function(data, template, selector) {
-            console.log(data);
-            console.log(template);
             template = _.template(template);
-            document.querySelector('.items').innerHTML = template({
-                data: data
+            document.querySelector(selector).innerHTML = template({
+                'data': data
             });
         },
 
@@ -106,7 +97,6 @@
 
         makeUrl: function(api, key, uri, query) {
             query = (typeof query === 'undefined') ? '' : query;
-            console.log(api + uri + query + key);
             return api + uri + query + key;
         },
 
@@ -118,27 +108,67 @@
             ).then(function(data, template) {
                 self.draw(data, template, selector)
             }).then(function(data) {
-                document.querySelector('.items').style.opacity = 1;
+                document.querySelector(selector).style.opacity = 1;
             });
         },
 
         drawSearch: function(url, templateFile, selector, query) {
-            document.querySelector('.items').style.opacity = 0;
-
+            document.querySelector(selector).style.opacity = 0;
+            if (query !== this.prevQuery) {
+                this.recentItems = [];
+            }
+            this.prevQuery = query;
             var self = this;
-            this.recentItems = [];
             $.when(
                 this.data(url, query),
                 this.template(templateFile)
             ).then(function(data, template) {
                 self.draw(data, template, selector)
             }).then(function(data) {
-                document.querySelector('.items').style.opacity = 1;
+                document.querySelector(selector).style.opacity = 1;
             });
         },
 
-        details: function() {
+        detailsData: function(listing) {
+            return $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, '/listings/' + listing + '.js?includes=Images')).then(function(a) {
+                return a.results
+            });
+        },
 
+        drawDetails: function(listing, templateFile, selector) {
+            var self = this;
+            var x = $.Deferred();
+            var item = this.recentItems.filter(function(val) {
+                return val.listing_id.toString() === listing;
+            });
+            var prev = this.prevDetail.filter(function(val) {
+                return val.listing_id.toString() === listing;
+            });
+            if (item.length > 0) {
+                $.when(this.template(templateFile)).then(function(templateFile) {
+                    self.draw(item[0], templateFile, selector);
+                    x.resolve();
+                });
+            } else if (prev.length > 0) {
+                $.when(this.template(templateFile)).then(function(templateFile) {
+                    self.draw(prev[0], templateFile, selector);
+                    x.resolve();
+                });
+            } else {
+                $.when(
+                    this.detailsData(listing),
+                    this.template(templateFile)
+                ).then(function(data, templateFile) {
+                    self.draw(data[0], templateFile, selector);
+                    self.prevDetail.push(data[0]);
+                    console.log(self.prevDetail);
+                }).then(function() {
+                    x.resolve();
+                })
+            }
+            $.when(x).then(function() {
+                document.querySelector(selector).style.top = '6.5em';
+            })
         },
 
     }
