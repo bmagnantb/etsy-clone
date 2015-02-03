@@ -2,8 +2,8 @@
 <div class="images">
   <img class="imgLrg" src="<%= data.Images[0].url_570xN %>">
   <div class="imgSidebar">
-    <% data.Images=_ .slice(data.Images, 1) %>
-      <% _.forEach(data.Images, function(val) { %>
+    <% var images=_ .slice(data.Images, 1) %>
+      <% _.forEach(images, function(val) { %>
         <img class="imgSide" src="<%= val.url_75x75 %>">
         <% }) %>
   </div>

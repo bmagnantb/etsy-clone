@@ -19,11 +19,13 @@
             },
 
             index: function() {
+                document.querySelector('main').style.overflow = 'hidden';
                 document.querySelector('.details').style.top = '100%';
                 self.drawListings(self.urls.interesting, self.templates.listings, '.items');
             },
 
             drawSearch: function(query) {
+                document.querySelector('main').style.overflow = 'hidden';
                 document.querySelector('.details').style.top = '100%';
                 query = query.replace(/ /g, '%20');
                 document.location.hash = 'search/' + query;
@@ -80,6 +82,7 @@
         },
 
         draw: function(data, template, selector) {
+        	console.log(arguments);
             template = _.template(template);
             document.querySelector(selector).innerHTML = template({
                 'data': data
@@ -87,10 +90,16 @@
         },
 
         events: function() {
+        	var self = this;
             $('#search').on('keydown', function(e) {
                 if (e.keyCode === 13 && this.value !== '') {
                     window.location.hash = 'search/' + this.value;
                     this.value = '';
+                }
+            });
+            $('body').on('click', function(e) {
+                if ($(e.target).closest('.details').length === 0 && $(e.target).closest('header').length === 0) {
+                		document.location.hash = '';
                 }
             });
         },
@@ -167,8 +176,18 @@
                 })
             }
             $.when(x).then(function() {
+                document.querySelector('.items').style.opacity = '.3';
+                var links = document.querySelectorAll('.items a');
+                if (links.length > 0) {
+                    [].forEach.call(links, function(val) {
+                    	val.className = 'linkoff';
+                    	val.onclick = function(e) {
+                    		e.preventDefault();
+                    	}
+                    });
+                }
                 document.querySelector(selector).style.top = '6.5em';
-            })
+            });
         },
 
     }
