@@ -1,3 +1,7 @@
+<div class="arrows">
+  <div class="arrow left"></div>
+  <div class="arrow right"></div>
+</div>
 <h2><%= data.title %></h2>
 <div class="images">
   <img class="imgLrg" src="<%= data.Images[0].url_570xN %>">
@@ -9,12 +13,13 @@
   </div>
 </div>
 <div class="desc">
-<h3>Details</h4>
+  <h3>Details</h4>
 <% data.description = data.description.replace(/\r/g, '<br />') %>
     <p>
       <%= data.description %>
     </p>
 </div>
 <div class="buy">
-<a href="<%= data.url %>"><h3>Buy on Etsy</h3></a>
+<a href="<%= data.url %>"><h3>Buy on Etsy</h3>
+  </a>
 </div>

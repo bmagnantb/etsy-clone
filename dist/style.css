@@ -921,14 +921,45 @@ header {
       outline: none; }
 
 main {
-  padding: 7.5em 1em 1em;
-  min-height: 100%;
+  padding: 7.5em .5em 1em;
   max-width: 60em;
   margin: 0 auto;
-  min-height: 100%;
   position: relative;
   -webkit-transition: overflow .3s ease;
           transition: overflow .3s ease; }
+
+.arrow {
+  -webkit-transition: opacity .2s ease;
+          transition: opacity .2s ease;
+  position: relative;
+  display: inline-block;
+  width: 3em;
+  height: 3em;
+  background-color: #fff;
+  border: 1px solid #555;
+  cursor: pointer; }
+  .arrow:before {
+    content: '';
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    display: block;
+    border-left: 4px solid #555;
+    border-bottom: 4px solid #555; }
+
+.left:before {
+  -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+  top: 30%;
+  left: 40%; }
+
+.right:before {
+  -webkit-transform: rotate(-135deg);
+      -ms-transform: rotate(-135deg);
+          transform: rotate(-135deg);
+  top: 30%;
+  right: 40%; }
 
 .items {
   opacity: 0;
@@ -969,7 +1000,7 @@ main {
           transition: top .5s ease;
   background-color: #fff;
   margin: 0 auto;
-  padding: 1em 1.5em;
+  padding: 1em 1em;
   border: 1px solid #ccc; }
   .details h2 {
     margin: 0 auto .5em;
@@ -1006,6 +1037,11 @@ main {
       width: auto;
       border: 1px solid #333;
       padding: .5em; }
+  .details .arrows {
+    text-align: center; }
+  .details .arrow {
+    display: none;
+    margin: 0 1em; }
 
 /*****
 MEDIA QUERIES
@@ -1018,5 +1054,22 @@ MEDIA QUERIES
     top: 1.5em; }
   .details {
     margin: 0 5% .75em;
-    width: 90%; } }
+    width: 90%;
+    padding: 1em 1.5em; }
+    .details .arrows {
+      position: fixed;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
+      width: 100%;
+      height: 3em;
+      left: 0; }
+    .details .arrow {
+      position: absolute;
+      margin: 0 .5em; }
+    .details .left {
+      left: 0; }
+    .details .right {
+      right: 0; } }
 

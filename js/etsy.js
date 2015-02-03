@@ -7,6 +7,7 @@
         this.apiUrlStart = 'https://openapi.etsy.com/v2/';
         this.prevQuery = '';
         this.prevDetail = [];
+        this.listingArrows = 0;
 
 
 
@@ -19,14 +20,14 @@
             },
 
             index: function() {
-                document.querySelector('main').style.overflow = 'hidden';
                 document.querySelector('.details').style.top = '100%';
+                document.querySelector('main').style.overflow = 'hidden';
                 self.drawListings(self.urls.interesting, self.templates.listings, '.items');
             },
 
             drawSearch: function(query) {
-                document.querySelector('main').style.overflow = 'hidden';
                 document.querySelector('.details').style.top = '100%';
+                document.querySelector('main').style.overflow = 'hidden';
                 query = query.replace(/ /g, '%20');
                 document.location.hash = 'search/' + query;
                 self.drawSearch(self.urls.search, self.templates.listings, '.items', query);
@@ -62,10 +63,8 @@
             var self = this;
             var x = $.Deferred();
             if (this.recentItems.length > 0) {
-                console.log('no download!');
                 x.resolve(this.recentItems);
             } else {
-                console.log('download');
                 $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, url, query)).then(function(a) {
                     var y = a.results;
                     x.resolve(y);
@@ -82,7 +81,6 @@
         },
 
         draw: function(data, template, selector) {
-        	console.log(arguments);
             template = _.template(template);
             document.querySelector(selector).innerHTML = template({
                 'data': data
@@ -90,7 +88,7 @@
         },
 
         events: function() {
-        	var self = this;
+            var self = this;
             $('#search').on('keydown', function(e) {
                 if (e.keyCode === 13 && this.value !== '') {
                     window.location.hash = 'search/' + this.value;
@@ -99,8 +97,31 @@
             });
             $('body').on('click', function(e) {
                 if ($(e.target).closest('.details').length === 0 && $(e.target).closest('header').length === 0) {
-                		document.location.hash = '';
+                    document.location.hash = '';
                 }
+            });
+            $('.details').delegate('> .arrows > .left', 'click', function(e) {
+                var currentIndex = self.recentItems.indexOf(self.prevDetail[0]);
+                if (currentIndex > 0) {
+                    window.location.hash = self.recentItems[currentIndex - 1].listing_id;
+                } else {
+                    window.location.hash = self.recentItems[self.recentItems.length - 1].listing_id;
+                }
+            });
+            $('.details').delegate('> .arrows > .right', 'click', function(e) {
+                var currentIndex = self.recentItems.indexOf(self.prevDetail[0]);
+                if (currentIndex < self.recentItems.length - 1) {
+                    window.location.hash = self.recentItems[currentIndex + 1].listing_id;
+                } else {
+                    window.location.hash = self.recentItems[0].listing_id;
+                }
+
+                // .left if startIndex > 0, startIndex--, if startIndex === 0, startIndex = itemArray.length
+
+                // .right if startIndex < itemArray.length, startIndex ++, if startIndex === itemArray.length, startIndex = 0
+
+                // draw startIndex
+
             });
         },
 
@@ -118,6 +139,7 @@
                 self.draw(data, template, selector)
             }).then(function(data) {
                 document.querySelector(selector).style.opacity = 1;
+                self.listingArrows = 'inline-block';
             });
         },
 
@@ -135,6 +157,7 @@
                 self.draw(data, template, selector)
             }).then(function(data) {
                 document.querySelector(selector).style.opacity = 1;
+                self.listingArrows = 'inline-block';
             });
         },
 
@@ -156,11 +179,13 @@
             if (item.length > 0) {
                 $.when(this.template(templateFile)).then(function(templateFile) {
                     self.draw(item[0], templateFile, selector);
+                    self.prevDetail.unshift(item[0]);
                     x.resolve();
                 });
             } else if (prev.length > 0) {
                 $.when(this.template(templateFile)).then(function(templateFile) {
                     self.draw(prev[0], templateFile, selector);
+                    self.prevDetail.unshift(prev[0]);
                     x.resolve();
                 });
             } else {
@@ -169,26 +194,33 @@
                     this.template(templateFile)
                 ).then(function(data, templateFile) {
                     self.draw(data[0], templateFile, selector);
-                    self.prevDetail.push(data[0]);
-                    console.log(self.prevDetail);
+                    self.prevDetail.unshift(data[0]);
                 }).then(function() {
                     x.resolve();
                 })
             }
             $.when(x).then(function() {
+                var arrows = document.querySelectorAll('.details > .arrows > .arrow');
+                [].forEach.call(arrows, function(val) {
+                    val.style.display = self.listingArrows;
+                });
                 document.querySelector('.items').style.opacity = '.3';
                 var links = document.querySelectorAll('.items a');
                 if (links.length > 0) {
                     [].forEach.call(links, function(val) {
-                    	val.className = 'linkoff';
-                    	val.onclick = function(e) {
-                    		e.preventDefault();
-                    	}
+                        val.className = 'linkoff';
+                        val.onclick = function(e) {
+                            e.preventDefault();
+                        }
                     });
                 }
                 document.querySelector(selector).style.top = '6.5em';
             });
         },
+
+        carousel: function(itemArray, startIndex, container) {
+
+        }
 
     }
 
