@@ -55,6 +55,7 @@ h1, h2, h3 {
 }
 .linkoff {
     cursor: default;
+    pointer-events: none;
 }
 body {
     transition: opacity .25s ease;
@@ -247,6 +248,7 @@ main {
     .arrow {
         display: none;
         margin: 0 1em;
+        transition: opacity .5s ease;
     }
 }
 /*****

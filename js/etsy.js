@@ -20,14 +20,12 @@
             },
 
             index: function() {
-                document.querySelector('.details').style.top = '100%';
-                document.querySelector('main').style.overflow = 'hidden';
-                self.drawListings(self.urls.interesting, self.templates.listings, '.items');
+                self.listingAnim();
+                self.drawListings(self.urls.active, self.templates.listings, '.items');
             },
 
             drawSearch: function(query) {
-                document.querySelector('.details').style.top = '100%';
-                document.querySelector('main').style.overflow = 'hidden';
+                self.listingAnim();
                 query = query.replace(/ /g, '%20');
                 document.location.hash = 'search/' + query;
                 self.drawSearch(self.urls.search, self.templates.listings, '.items', query);
@@ -49,7 +47,7 @@
 
     Etsy.prototype = {
         urls: {
-            interesting: 'listings/interesting.js?includes=Images',
+            active: 'listings/active.js?includes=Images',
             search: 'listings/active.js?includes=Images&keywords='
 
         },
@@ -83,45 +81,7 @@
         draw: function(data, template, selector) {
             template = _.template(template);
             document.querySelector(selector).innerHTML = template({
-                'data': data
-            });
-        },
-
-        events: function() {
-            var self = this;
-            $('#search').on('keydown', function(e) {
-                if (e.keyCode === 13 && this.value !== '') {
-                    window.location.hash = 'search/' + this.value;
-                    this.value = '';
-                }
-            });
-            $('body').on('click', function(e) {
-                if ($(e.target).closest('.details').length === 0 && $(e.target).closest('header').length === 0) {
-                    document.location.hash = '';
-                }
-            });
-            $('.details').delegate('> .arrows > .left', 'click', function(e) {
-                var currentIndex = self.recentItems.indexOf(self.prevDetail[0]);
-                if (currentIndex > 0) {
-                    window.location.hash = self.recentItems[currentIndex - 1].listing_id;
-                } else {
-                    window.location.hash = self.recentItems[self.recentItems.length - 1].listing_id;
-                }
-            });
-            $('.details').delegate('> .arrows > .right', 'click', function(e) {
-                var currentIndex = self.recentItems.indexOf(self.prevDetail[0]);
-                if (currentIndex < self.recentItems.length - 1) {
-                    window.location.hash = self.recentItems[currentIndex + 1].listing_id;
-                } else {
-                    window.location.hash = self.recentItems[0].listing_id;
-                }
-
-                // .left if startIndex > 0, startIndex--, if startIndex === 0, startIndex = itemArray.length
-
-                // .right if startIndex < itemArray.length, startIndex ++, if startIndex === itemArray.length, startIndex = 0
-
-                // draw startIndex
-
+                data: data
             });
         },
 
@@ -138,8 +98,7 @@
             ).then(function(data, template) {
                 self.draw(data, template, selector)
             }).then(function(data) {
-                document.querySelector(selector).style.opacity = 1;
-                self.listingArrows = 'inline-block';
+                self.listingAnim2(selector);
             });
         },
 
@@ -156,70 +115,129 @@
             ).then(function(data, template) {
                 self.draw(data, template, selector)
             }).then(function(data) {
-                document.querySelector(selector).style.opacity = 1;
-                self.listingArrows = 'inline-block';
+                self.listingAnim2(selector);
             });
         },
 
-        detailsData: function(listing) {
-            return $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, '/listings/' + listing + '.js?includes=Images')).then(function(a) {
-                return a.results
-            });
+        listingAnim: function() {
+            if (document.querySelector('.details > .arrows')) {
+                document.querySelector('.details > .arrows').style.display = 'none';
+            }
+            document.querySelector('.details').style.top = '100%';
+            document.querySelector('main').style.overflow = 'hidden';
+        },
+
+        listingAnim2: function(selector) {
+            document.querySelector(selector).style.opacity = 1;
+            this.listingArrows = 'inline-block';
+        },
+
+        dataDetails: function(listing, item) {
+            var x = $.Deferred();
+            if (item.length === 0) {
+                $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, '/listings/' + listing + '.js?includes=Images')).then(function(a) {
+                    x.resolve(a.results[0]);
+                });
+            } else {
+                x.resolve(item[0]);
+            }
+            return x;
         },
 
         drawDetails: function(listing, templateFile, selector) {
             var self = this;
             var x = $.Deferred();
-            var item = this.recentItems.filter(function(val) {
+            var recent = this.recentItems.filter(function(val) {
                 return val.listing_id.toString() === listing;
             });
             var prev = this.prevDetail.filter(function(val) {
                 return val.listing_id.toString() === listing;
             });
-            if (item.length > 0) {
-                $.when(this.template(templateFile)).then(function(templateFile) {
-                    self.draw(item[0], templateFile, selector);
-                    self.prevDetail.unshift(item[0]);
-                    x.resolve();
-                });
-            } else if (prev.length > 0) {
-                $.when(this.template(templateFile)).then(function(templateFile) {
-                    self.draw(prev[0], templateFile, selector);
-                    self.prevDetail.unshift(prev[0]);
-                    x.resolve();
-                });
-            } else {
-                $.when(
-                    this.detailsData(listing),
-                    this.template(templateFile)
-                ).then(function(data, templateFile) {
-                    self.draw(data[0], templateFile, selector);
-                    self.prevDetail.unshift(data[0]);
-                }).then(function() {
-                    x.resolve();
-                })
-            }
+
+            var item = (recent.length > 0) ? recent : (prev.length > 0) ? prev : '';
+
+            $.when(
+                self.dataDetails(listing, item),
+                self.template(templateFile)
+            ).then(function(item, templateFile) {
+                self.draw(item, templateFile, selector);
+                self.prevDetail.unshift(item);
+                x.resolve();
+            });
+
             $.when(x).then(function() {
-                var arrows = document.querySelectorAll('.details > .arrows > .arrow');
-                [].forEach.call(arrows, function(val) {
-                    val.style.display = self.listingArrows;
-                });
+                self.arrowDisplay(listing);
+                self.disableLinks();
+
                 document.querySelector('.items').style.opacity = '.3';
-                var links = document.querySelectorAll('.items a');
-                if (links.length > 0) {
-                    [].forEach.call(links, function(val) {
-                        val.className = 'linkoff';
-                        val.onclick = function(e) {
-                            e.preventDefault();
-                        }
-                    });
-                }
                 document.querySelector(selector).style.top = '6.5em';
             });
         },
 
-        carousel: function(itemArray, startIndex, container) {
+        arrowDisplay: function(listing) {
+            var arrowLeft = document.querySelector('.details > .arrows > .left');
+            var arrowRight = document.querySelector('.details > .arrows > .right');
+            if (this.recentItems.length > 0) {
+                if (listing === this.recentItems[0].listing_id.toString()) {
+                    arrowRight.style.display = this.listingArrows;
+                    arrowLeft.style.pointerEvents = 'none';
+                } else if (listing === this.recentItems[this.recentItems.length - 1].listing_id.toString()) {
+                    arrowLeft.style.display = this.listingArrows;
+                    arrowRight.style.pointerEvents = 'none';
+                } else {
+                    arrowLeft.style.display = this.listingArrows;
+                    arrowRight.style.display = this.listingArrows;
+                }
+            }
+        },
 
+        disableLinks: function() {
+            var links = document.querySelectorAll('.items a');
+            if (links.length > 0) {
+                [].forEach.call(links, function(val) {
+                    val.className = 'linkoff';
+                    val.onclick = function(e) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        },
+
+        events: function() {
+            $('#search').on('keydown', function(e) {
+                if (e.keyCode === 13 && this.value !== '') {
+                    window.location.hash = 'search/' + this.value;
+                    this.value = '';
+                }
+            });
+            $('body').on('click', function(e) {
+                if ($(e.target).closest('.details').length === 0 && $(e.target).closest('header').length === 0) {
+                    document.location.hash = '';
+                }
+            });
+            $('.details').on('click', ' > .arrows > .left', this.detailLeft.bind(this));
+            $('.details').on('click', ' > .arrows > .right', this.detailRight.bind(this));
+            // $('body').on('keydown', this.detailLeft.bind(this));
+        },
+
+        detailLeft: function(e) {
+            // console.log(e);
+            var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
+            window.location.hash = this.recentItems[currentIndex - 1].listing_id;
+            if (currentIndex === 1) {
+                document.querySelector('.details > .arrows > .left').style.opacity = '0';
+            }
+            // if (document.querySelector('.arrows')) {
+            // 	console.log('arrowsss');
+            // }
+        },
+
+        detailRight: function(e) {
+            var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
+            window.location.hash = this.recentItems[currentIndex + 1].listing_id;
+            if (currentIndex === this.recentItems.length - 2) {
+                document.querySelector('.details > .arrows > .right').style.opacity = '0';
+            }
         }
 
     }
