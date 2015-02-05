@@ -122,7 +122,11 @@ main {
     position: relative;
     transition: overflow .3s ease;
 }
+.arrows {
+	pointer-events: none;
+}
 .arrow {
+	pointer-events: auto;
     transition: opacity .2s ease;
     position: relative;
     display: inline-block;
@@ -183,6 +187,13 @@ main {
         font-size: .9em;
         max-width: 95%;
         margin: 0 .5rem;
+    }
+    .noresults {
+    	width: 100%;
+    	border-top-right-radius: 0;
+    	border-top-right-radius: 0;
+    	text-align: center;
+    	padding: 2em 0;
     }
 }
 .details {
@@ -249,6 +260,16 @@ main {
         display: none;
         margin: 0 1em;
         transition: opacity .5s ease;
+    }
+    .close {
+    	font-size: 1.5em;
+    	position: absolute;
+    	top: 0;
+    	right: 0;
+    	padding: 0 .5em;
+    	border-left: 1px solid #ccc;
+    	border-bottom: 1px solid #ccc;
+    	cursor: pointer;
     }
 }
 /*****

@@ -5,9 +5,12 @@
         this.recentItems = [];
         this.apiKey = '&callback=?&api_key=6990q3hh09orsy6z1x0ghq2q';
         this.apiUrlStart = 'https://openapi.etsy.com/v2/';
+        this.fromSearch = '';
         this.prevQuery = '';
         this.prevDetail = [];
         this.listingArrows = 0;
+        this.hashRecent = '';
+        this.noresults = '<div class="noresults"><h2>Search does not match any items.</h2></div>';
 
 
 
@@ -21,6 +24,7 @@
 
             index: function() {
                 self.listingAnim();
+                self.hashRecent = document.location.hash;
                 self.drawListings(self.urls.active, self.templates.listings, '.items');
             },
 
@@ -28,6 +32,8 @@
                 self.listingAnim();
                 query = query.replace(/ /g, '%20');
                 document.location.hash = 'search/' + query;
+                self.hashRecent = document.location.hash;
+                self.fromSearch = true;
                 self.drawSearch(self.urls.search, self.templates.listings, '.items', query);
             },
 
@@ -92,6 +98,10 @@
 
         drawListings: function(url, templateFile, selector) {
             var self = this;
+            if (this.fromSearch) {
+                this.recentItems = [];
+                document.querySelector('.items').style.opacity = 0;
+            }
             $.when(
                 this.data(url),
                 this.template(templateFile)
@@ -99,6 +109,7 @@
                 self.draw(data, template, selector)
             }).then(function(data) {
                 self.listingAnim2(selector);
+                self.fromSearch = false;
             });
         },
 
@@ -113,9 +124,14 @@
                 this.data(url, query),
                 this.template(templateFile)
             ).then(function(data, template) {
-                self.draw(data, template, selector)
+                if (data.length > 0) {
+                    self.draw(data, template, selector)
+                } else {
+                    document.querySelector(selector).innerHTML = self.noresults;
+                }
             }).then(function(data) {
                 self.listingAnim2(selector);
+                self.fromSearch = true;
             });
         },
 
@@ -210,33 +226,43 @@
                     this.value = '';
                 }
             });
-            $('body').on('click', function(e) {
-                if ($(e.target).closest('.details').length === 0 && $(e.target).closest('header').length === 0) {
-                    document.location.hash = '';
-                }
-            });
-            $('.details').on('click', ' > .arrows > .left', this.detailLeft.bind(this));
-            $('.details').on('click', ' > .arrows > .right', this.detailRight.bind(this));
-            // $('body').on('keydown', this.detailLeft.bind(this));
+            $('body').on('mousedown', this.closeDetails.bind(this));
+            $('.details').on('mousedown', ' > .close', this.closeDetails.bind(this));
+            $('body').on('keydown', this.closeDetails.bind(this));
+            $('.details').on('mousedown', ' > .arrows > .left', this.detailLeft.bind(this));
+            $('.details').on('mousedown', ' > .arrows > .right', this.detailRight.bind(this));
+            $('body').on('keydown', this.detailLeft.bind(this));
+            $('body').on('keydown', this.detailRight.bind(this));
+        },
+
+        closeDetails: function(e) {
+
+            var testA = $(e.target).closest('.details').length === 0 && $(e.target).closest('header').length === 0 && e.type === 'mousedown';
+            var testB = e.type === 'mousedown' && e.target === document.querySelector('.close');
+            if (testA || testB || e.keyCode === 27) {
+                document.location.hash = this.hashRecent;
+            }
         },
 
         detailLeft: function(e) {
-            // console.log(e);
-            var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
-            window.location.hash = this.recentItems[currentIndex - 1].listing_id;
-            if (currentIndex === 1) {
-                document.querySelector('.details > .arrows > .left').style.opacity = '0';
+            var test = document.querySelector('.arrows') && e.keyCode === 37;
+            if (e.type === 'mousedown' || test) {
+                var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
+                window.location.hash = this.recentItems[currentIndex - 1].listing_id;
+                if (currentIndex === 1) {
+                    document.querySelector('.details > .arrows > .left').style.opacity = '0';
+                }
             }
-            // if (document.querySelector('.arrows')) {
-            // 	console.log('arrowsss');
-            // }
         },
 
         detailRight: function(e) {
-            var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
-            window.location.hash = this.recentItems[currentIndex + 1].listing_id;
-            if (currentIndex === this.recentItems.length - 2) {
-                document.querySelector('.details > .arrows > .right').style.opacity = '0';
+            var test = document.querySelector('.arrows') && e.keyCode === 39;
+            if (e.type === 'mousedown' || test) {
+                var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
+                window.location.hash = this.recentItems[currentIndex + 1].listing_id;
+                if (currentIndex === this.recentItems.length - 2) {
+                    document.querySelector('.details > .arrows > .right').style.opacity = '0';
+                }
             }
         }
 

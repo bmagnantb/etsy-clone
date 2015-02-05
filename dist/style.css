@@ -929,7 +929,11 @@ main {
   -webkit-transition: overflow .3s ease;
           transition: overflow .3s ease; }
 
+.arrows {
+  pointer-events: none; }
+
 .arrow {
+  pointer-events: auto;
   -webkit-transition: opacity .2s ease;
           transition: opacity .2s ease;
   position: relative;
@@ -991,6 +995,14 @@ main {
     font-size: .9em;
     max-width: 95%;
     margin: 0 .5rem; }
+  .items .noresults {
+    width: 100%;
+    -webkit-border-top-right-radius: 0;
+            border-top-right-radius: 0;
+    -webkit-border-top-right-radius: 0;
+            border-top-right-radius: 0;
+    text-align: center;
+    padding: 2em 0; }
 
 .details {
   opacity: 0;
@@ -1045,6 +1057,15 @@ main {
     margin: 0 1em;
     -webkit-transition: opacity .5s ease;
             transition: opacity .5s ease; }
+  .details .close {
+    font-size: 1.5em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 .5em;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer; }
 
 /*****
 MEDIA QUERIES

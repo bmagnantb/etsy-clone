@@ -1,9 +1,11 @@
+<div class="close">X</div>
 <div class="arrows">
   <div class="arrow left"></div>
   <div class="arrow right"></div>
 </div>
 <h2><%= data.title %></h2>
 <div class="images">
+<% if (data.Images) { %>
   <img class="imgLrg" src="<%= data.Images[0].url_570xN %>">
   <div class="imgSidebar">
     <% var images=_ .slice(data.Images, 1) %>
@@ -11,6 +13,7 @@
         <img class="imgSide" src="<%= val.url_75x75 %>">
         <% }) %>
   </div>
+<% } %>
 </div>
 <div class="desc">
   <h3>Details</h4>
