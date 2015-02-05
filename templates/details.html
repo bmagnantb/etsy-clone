@@ -27,6 +27,7 @@
 		<h3>Buy on Etsy</h3>
   </a>
 </div>
+<% if (data.Shop.Listings) { %>
 <h3 class="shopIntro">More from this Artist</h3>
 <div class="shopListings grid grid-2-20">
   <% data.Shop.Listings.forEach(function(val) { %>
@@ -44,3 +45,4 @@
     <% } %>
     <% }) %>
 </div>
+<% } %>

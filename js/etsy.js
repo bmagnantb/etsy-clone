@@ -86,7 +86,7 @@
         },
 
         draw: function(data, template, selector) {
-        	console.log(arguments);
+            console.log(arguments);
             template = _.template(template);
             document.querySelector(selector).innerHTML = template({
                 data: data
@@ -152,14 +152,14 @@
 
         dataDetails: function(listing, item) {
             var x = $.Deferred();
-            if (item.length === 0) {
+            if (item.length === 0 || !item[0].Shop) {
                 $.getJSON(this.makeUrl(this.apiUrlStart, this.apiKey, '/listings/' + listing + '.js?includes=Images,Shop/Listings:5/Images')).then(function(a) {
-                	console.log(a.results);
-                	if (a.results[0].Shop.Listings.length > 0) {
-                		a.results[0].Shop.Listings = a.results[0].Shop.Listings.filter(function(val) {
-                			return val.listing_id.toString() !== listing;
-                		}).slice(0, 4);
-                	}
+                    console.log(a.results);
+                    if (a.results[0].Shop.Listings) {
+                        a.results[0].Shop.Listings = a.results[0].Shop.Listings.filter(function(val) {
+                            return val.listing_id.toString() !== listing;
+                        }).slice(0, 4);
+                    }
                     x.resolve(a.results[0]);
                 });
             } else {
@@ -252,14 +252,14 @@
         },
 
         detailLeft: function(e) {
-                var test = document.querySelector('.arrows') && e.keyCode === 37;
-                if (e.type === 'mousedown' || test) {
-                    var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
-                    window.location.hash = this.recentItems[currentIndex - 1].listing_id;
-                    if (currentIndex === 1) {
-                        document.querySelector('.details > .arrows > .left').style.opacity = '0';
-                    }
+            var test = document.querySelector('.arrows') && e.keyCode === 37;
+            if (e.type === 'mousedown' || test) {
+                var currentIndex = this.recentItems.indexOf(this.prevDetail[0]);
+                window.location.hash = this.recentItems[currentIndex - 1].listing_id;
+                if (currentIndex === 1) {
+                    document.querySelector('.details > .arrows > .left').style.opacity = '0';
                 }
+            }
 
         },
 
