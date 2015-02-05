@@ -1,11 +1,15 @@
 <% _.forEach(data, function(val){ %>
+<% if (val.state === 'active') { %>
   <div class="item <%= val.listing_id %>">
+  <% if (val.Images) { %>
     <a href="#<%= val.listing_id %>">
     <img src="<%= val.Images[0].url_570xN %>" />
     </a>
+    <% } %>
     <a href="#<%= val.listing_id %>">
       <h3><%= val.title.substr(0, 30) + '...' %></h3>
     </a>
     <h4><%= val.description.substr(0, 70) + '...' %></h4>
   </div>
+  <% } %>
   <% }); %>

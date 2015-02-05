@@ -5,15 +5,15 @@
 </div>
 <h2><%= data.title %></h2>
 <div class="images">
-<% if (data.Images) { %>
-  <img class="imgLrg" src="<%= data.Images[0].url_570xN %>">
-  <div class="imgSidebar">
-    <% var images=_ .slice(data.Images, 1) %>
-      <% _.forEach(images, function(val) { %>
-        <img class="imgSide" src="<%= val.url_75x75 %>">
-        <% }) %>
-  </div>
-<% } %>
+  <% if (data.Images) { %>
+    <img class="imgLrg" src="<%= data.Images[0].url_570xN %>">
+    <div class="imgSidebar">
+      <% var images=_ .slice(data.Images, 1) %>
+        <% _.forEach(images, function(val) { %>
+          <img class="imgSide" src="<%= val.url_75x75 %>">
+          <% }) %>
+    </div>
+    <% } %>
 </div>
 <div class="desc">
   <h3>Details</h4>
@@ -23,6 +23,24 @@
     </p>
 </div>
 <div class="buy">
-<a href="<%= data.url %>"><h3>Buy on Etsy</h3>
+	<a href="<%= data.url %>">
+		<h3>Buy on Etsy</h3>
   </a>
+</div>
+<h3 class="shopIntro">More from this Artist</h3>
+<div class="shopListings grid grid-2-20">
+  <% data.Shop.Listings.forEach(function(val) { %>
+  <% if (val.state==='active') { %>
+    <div class="shopItem <%= val.listing_id %>">
+      <% if (val.Images) { %>
+        <a href="#<%= val.listing_id %>">
+    <img src="<%= val.Images[0].url_170x135 %>" />
+    </a>
+        <% } %>
+          <a href="#<%= val.listing_id %>">
+            <h4><%= val.title.substr(0, 25) + '...' %></h4>
+          </a>
+    </div>
+    <% } %>
+    <% }) %>
 </div>
