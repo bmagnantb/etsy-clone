@@ -7,7 +7,7 @@
         "build:js": "npm run lint",
         "watch:js": "watch 'npm run build:js' ./js/",
         "build-all:css": "node-sass ./scss/**.scss -o ./dist",
-        "build:css": "node-sass ./scss/style.scss --stdout | autoprefixer -b 'last 10 versions' > ./dist/style.css & say -v Daniel 'SASS completed!'",
+        "build:css": "node-sass ./scss/style.scss --stdout | autoprefixer -b 'last 10 versions' > ./dist/style.css",
         "watch:css": "watch 'npm run build:css' ./scss/",
         "build": "npm run build:css",
         "watch:2": "npm run watch:css",

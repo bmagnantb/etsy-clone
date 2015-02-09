@@ -123,6 +123,25 @@ main {
     position: relative;
     transition: overflow .3s ease;
 }
+.filters {
+	text-align: center;
+	margin-top: .5em;
+	margin-bottom: 1em;
+	input {
+		display: none;
+	}
+	input:checked + label {
+		color: #333;
+		border: 1px solid #333;
+	}
+	label {
+		color: #555;
+		border: 1px solid #ccc;
+		border-radius: .2em;
+		padding: .3em .5em;
+		margin: 0 .3em;
+	}
+}
 .arrows {
     pointer-events: none;
 }
@@ -196,7 +215,7 @@ main {
         text-align: center;
         padding: 2em 0;
     }
-}
+  }
 .details {
     opacity: 0;
     position: absolute;

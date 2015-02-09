@@ -12,6 +12,11 @@
         this.hashRecent = '';
         this.noresults = '<div class="noresults"><h2>Search does not match any items.</h2></div>';
         this.shop = '';
+        this.filters = {
+            week: false,
+            sale: false,
+            pics: false
+        };
 
 
 
@@ -26,6 +31,7 @@
             index: function() {
                 self.listingAnim();
                 self.hashRecent = document.location.hash;
+                self.resetFilters();
                 self.drawListings(self.urls.active, self.templates.listings, '.items');
             },
 
@@ -35,6 +41,7 @@
                 document.location.hash = 'search/' + query;
                 self.hashRecent = document.location.hash;
                 self.fromSearch = true;
+                self.resetFilters();
                 self.drawSearch(self.urls.search, self.templates.listings, '.items', query);
             },
 
@@ -86,6 +93,9 @@
         },
 
         draw: function(data, template, selector) {
+            console.log(data.length);
+            data.length > 24 ? data = data.slice(0, 24) : null;
+            console.log(data.length);
             console.log(arguments);
             template = _.template(template);
             document.querySelector(selector).innerHTML = template({
@@ -134,6 +144,33 @@
             }).then(function(data) {
                 self.listingAnim2(selector);
                 self.fromSearch = true;
+            });
+        },
+
+        filterListings: function(filterName) {
+            var self = this;
+            var filteredListings = this.recentItems
+            if (filterName === 'week') {
+                filteredListings = filteredListings.filter(function(val) {
+                    return val.creation_tsz > (new Date() / 1000) - 60 * 24 * 7;
+                });
+            } else if (filterName === 'sale') {
+                filteredListings = filteredListings.filter(function(val) {
+                    return val.description.match(/\bsale\b/i);
+                });
+            } else if (filterName === 'pics') {
+                filteredListings = filteredListings.filter(function(val) {
+                    return val.Images.length > 2;
+                });
+            } else {}
+            $.when(this.template(this.templates.listings)).then(function(templateFile) {
+                self.draw(filteredListings, templateFile, '.items');
+            });
+        },
+
+        resetFilters: function() {
+            [].forEach.call(document.querySelectorAll('input[type="checkbox"]'), function(val) {
+                val.checked = false;
             });
         },
 
@@ -241,6 +278,15 @@
             $('.details').on('mousedown', ' > .arrows > .right', this.detailRight.bind(this));
             $('body').on('keydown', this.detailLeft.bind(this));
             $('body').on('keydown', this.detailRight.bind(this));
+            $('body').on('change', 'input[type="checkbox"]', this.toggle.bind(this));
+        },
+
+        toggle: function(e) {
+            if (e.currentTarget.checked === true) {
+                var filterName = e.currentTarget.name;
+                this.filters.filterName = true;
+            }
+            this.filterListings(filterName);
         },
 
         closeDetails: function(e) {

@@ -12,7 +12,7 @@ function app(){
         {url: "./bower_components/jquery/dist/jquery.min.js"},
         {url: "./bower_components/lodash/lodash.min.js"},
         {url: "./bower_components/backbone/backbone.js"},
-        {url: "./js/etsy.js"}
+        {url: "./js/etsy2.js"}
     ).then(function(){
         // start app?
 
